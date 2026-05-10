@@ -1,0 +1,7 @@
+risk-engine/venv/
+risk-engine/__pycache__/
+risk-engine/*.pyc
+dashboard/node_modules/
+*.pyd
+*.exe
+*.dll 
