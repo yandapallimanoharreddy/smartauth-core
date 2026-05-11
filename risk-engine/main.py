@@ -4,6 +4,9 @@ from typing import Optional
 import uvicorn
 import pickle
 import numpy as np
+import requests
+from datetime import datetime
+import threading
 
 app = FastAPI(
     title="SmartAuth Risk Engine",
@@ -13,6 +16,10 @@ app = FastAPI(
 
 with open("risk_model.pkl", "rb") as f:
     model = pickle.load(f)
+
+IDM_URL = "http://localhost:8085/openidm"
+IDM_USER = "openidm-admin"
+IDM_PASS = "openidm-admin"
 
 class SignalBundle(BaseModel):
     user_id: str
@@ -30,6 +37,33 @@ class RiskResponse(BaseModel):
     action: str
     risk_level: str
     top_factors: list[str]
+
+def log_to_idm(signals, score, action, risk_level):
+    try:
+        audit_event = {
+            "userId": signals.user_id,
+            "riskScore": str(score),
+            "riskLevel": risk_level,
+            "riskAction": action,
+            "loginHour": str(signals.login_hour),
+            "ipAddress": signals.ip_address,
+            "browser": signals.user_agent,
+            "deviceFingerprint": signals.device_fingerprint or "unknown",
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        requests.post(
+            f"{IDM_URL}/managed/smartAuthAudit?_action=create",
+            json=audit_event,
+            headers={
+                "Content-Type": "application/json",
+                "X-OpenIDM-Username": IDM_USER,
+                "X-OpenIDM-Password": IDM_PASS
+            },
+            timeout=3
+        )
+        print(f"IDM audit logged: {signals.user_id} - {risk_level}")
+    except Exception as e:
+        print(f"IDM logging failed: {e}")
 
 @app.get("/health")
 def health():
@@ -68,6 +102,10 @@ def risk_score(signals: SignalBundle):
     else:
         action = "block"
         risk_level = "high"
+
+    thread = threading.Thread(target=log_to_idm, args=(signals, score, action, risk_level))
+    thread.daemon = True
+    thread.start()
 
     return RiskResponse(
         score=score,
