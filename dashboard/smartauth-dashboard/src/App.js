@@ -14,7 +14,7 @@ function App() {
   const fetchEvents = async () => {
     try {
       const res = await axios.get(
-        "http://localhost:8085/openidm/managed/smartAuthAudit?_queryFilter=true&_pageSize=20&_sortKeys=-timestamp",
+  "/openidm/managed/smartAuthAudit?_queryFilter=true&_pageSize=20&_sortKeys=-timestamp",
         { headers: { "X-OpenIDM-Username": "openidm-admin", "X-OpenIDM-Password": "openidm-admin" } }
       );
       const data = res.data.result || [];
