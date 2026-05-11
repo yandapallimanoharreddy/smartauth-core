@@ -80,9 +80,9 @@ The AI risk engine returns a score between 0 and 1 with a recommended action:
 
 \- \[x] Phase 2 — ML risk scoring model (XGBoost, 100% accuracy)
 
-\- \[ ] Phase 3 — IDM governance integration
+\- \[x] Phase 3 — IDM governance integration
 
-\- \[ ] Phase 4 — React dashboard
+\- \[x] Phase 4 — React dashboard
 
 \## Author
 
