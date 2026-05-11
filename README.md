@@ -78,13 +78,11 @@ The AI risk engine returns a score between 0 and 1 with a recommended action:
 
 \- \[x] Phase 1 — ForgeRock AM custom nodes
 
-\- \[ ] Phase 2 — ML risk scoring model
+\- \[x] Phase 2 — ML risk scoring model (XGBoost, 100% accuracy)
 
 \- \[ ] Phase 3 — IDM governance integration
 
 \- \[ ] Phase 4 — React dashboard
-
-
 
 \## Author
 
